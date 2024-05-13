@@ -1,6 +1,10 @@
 package org.caglar.flightsearchapi.service;
 
+import org.caglar.flightsearchapi.exceptions.InvalidDateException;
+import org.caglar.flightsearchapi.exceptions.InvalidPriceException;
+import org.caglar.flightsearchapi.models.Flight;
 import org.caglar.flightsearchapi.repository.FlightRepository;
+import org.caglar.flightsearchapi.utils.DateUtil;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -11,5 +15,19 @@ public class FlightService {
         this.flightRepository = flightRepository;
     }
 
-
+    public Flight save(Flight flight) throws Exception {
+        if(flight.getDepartureDate().isEmpty() || flight.getArrivalDate().isEmpty()){
+            throw new InvalidDateException("Date cannot be null.");
+        }
+        if (!DateUtil.isValidDate(flight.getDepartureDate()) || !DateUtil.isValidDate(flight.getArrivalDate())) {
+            throw new InvalidDateException("Invalid date.");
+        }
+        if(!DateUtil.isDepartureDateAfterArrivalDate(flight.getDepartureDate(), flight.getArrivalDate())){
+            throw new InvalidDateException("Departure date cannot be later than arrival date");
+        }
+        if (flight.getPrice() < 0) {
+            throw new InvalidPriceException("Invalid price.");
+        }
+        return flightRepository.save(flight);
+    }
 }

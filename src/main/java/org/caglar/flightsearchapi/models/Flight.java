@@ -22,10 +22,10 @@ public class Flight {
     private String arrivalAirport;
 
     @Column(name = "departure_date")
-    private Date departureDate;
+    private String departureDate;
 
     @Column(name = "arrival_date")
-    private Date arrivalDate;
+    private String arrivalDate;
 
     @Column(name = "price")
     private Double price;

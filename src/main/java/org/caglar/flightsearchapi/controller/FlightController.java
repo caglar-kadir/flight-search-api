@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/flight-search/v1")
 public class FlightController {
@@ -19,5 +21,10 @@ public class FlightController {
     @PostMapping
     public Flight save(@RequestBody Flight flight) throws Exception {
         return flightService.save(flight);
+    }
+
+    @PostMapping("/save-all")
+    public List<Flight> saveAll(@RequestBody List<Flight> flights) {
+        return flightService.saveAll(flights);
     }
 }

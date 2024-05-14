@@ -7,6 +7,8 @@ import org.caglar.flightsearchapi.repository.FlightRepository;
 import org.caglar.flightsearchapi.utils.DateUtil;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class FlightService {
     FlightRepository flightRepository;
@@ -16,6 +18,22 @@ public class FlightService {
     }
 
     public Flight save(Flight flight) throws Exception {
+        if(isFlightValid(flight)){
+            return flightRepository.save(flight);
+        }
+        throw new Exception("Unsuccessful process.");
+    }
+    public List<Flight> saveAll(List<Flight> flights) {
+        return flights.stream().filter(flight -> {
+            try {
+                return isFlightValid(flight);
+            } catch (InvalidDateException | InvalidPriceException e) {
+                throw new RuntimeException(e);
+            }
+        }).map(flight -> flightRepository.save(flight)).toList();
+    }
+
+    private boolean isFlightValid(Flight flight) throws InvalidDateException, InvalidPriceException {
         if(flight.getDepartureDate().isEmpty() || flight.getArrivalDate().isEmpty()){
             throw new InvalidDateException("Date cannot be null.");
         }
@@ -28,6 +46,6 @@ public class FlightService {
         if (flight.getPrice() < 0) {
             throw new InvalidPriceException("Invalid price.");
         }
-        return flightRepository.save(flight);
+        return true;
     }
 }

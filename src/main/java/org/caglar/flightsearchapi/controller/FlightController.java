@@ -4,6 +4,7 @@ import org.caglar.flightsearchapi.exceptions.flightExceptions.FlightNotFoundExce
 import org.caglar.flightsearchapi.models.Flight;
 import org.caglar.flightsearchapi.models.dto.FlightDTO;
 import org.caglar.flightsearchapi.service.FlightService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 public class FlightController {
     FlightService flightService;
 
+    @Autowired
     FlightController(FlightService flightService) {
         this.flightService = flightService;
     }

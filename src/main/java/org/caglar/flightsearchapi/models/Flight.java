@@ -1,8 +1,10 @@
 package org.caglar.flightsearchapi.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Data
@@ -13,21 +15,25 @@ public class Flight {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "flight_id")
-    private Long id;
-
-    @Column(name = "departure_airport")
-    private String departureAirport;
-
-    @Column(name = "arrival_airport")
-    private String arrivalAirport;
+    private long id;
 
     @Column(name = "departure_date")
-    private String departureDate;
+    private LocalDateTime departureDate;
 
     @Column(name = "arrival_date")
-    private String arrivalDate;
+    private LocalDateTime arrivalDate;
 
     @Column(name = "price")
-    private Double price;
+    private double price;
+
+    @ManyToOne
+    @JoinColumn(name = "departure_airport")
+    @JsonIgnore
+    private Airport departureAirport;
+
+    @ManyToOne
+    @JoinColumn(name = "arrival_airport")
+    @JsonIgnore
+    private Airport arrivalAirport;
 
 }

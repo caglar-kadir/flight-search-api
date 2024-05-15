@@ -1,41 +1,35 @@
 package org.caglar.flightsearchapi.utils;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import org.caglar.flightsearchapi.exceptions.InvalidDateException;
+import org.caglar.flightsearchapi.exceptions.InvalidPriceException;
+import org.caglar.flightsearchapi.models.Flight;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.Date;
 
 public class DateUtil {
     private DateUtil() {
     }
 
-    public static boolean isValidDate(String date) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm");
-        Date d = null;
-        try {
-            d = dateFormat.parse(date);
-        } catch (ParseException e) {
-            System.out.println("Parse Exception - Cannot parse date: " + e);
+    public static boolean isFlightValid(Flight flight) throws InvalidDateException, InvalidPriceException {
+        if (flight.getDepartureDate() == null || flight.getArrivalDate() == null) {
+            throw new InvalidDateException("Date cannot be null.");
         }
-        Date currentDate = Date.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant());
-        if (d == null) {
-            return false;
+        if (isValidDate(flight.getDepartureDate()) || isValidDate(flight.getArrivalDate())) {
+            throw new InvalidDateException("Invalid date.");
         }
-        return !d.before(currentDate);
+        if (!isDepartureDateBeforeArrivalDate(flight.getDepartureDate(), flight.getArrivalDate())) {
+            throw new InvalidDateException("Departure date cannot be later than arrival date");
+        }
+        if (flight.getPrice() < 0) {
+            throw new InvalidPriceException("Invalid price.");
+        }
+        return true;
     }
 
-    public static boolean isDepartureDateAfterArrivalDate (String departureDate, String arrivalDate) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm");
-        try{
-            Date dd = dateFormat.parse(departureDate);
-            Date ad = dateFormat.parse(arrivalDate);
-            if(dd.before(ad)){
-                return true;
-            }
-        } catch (ParseException e){
-            System.out.println("Parse Exception - Cannot parse date: " + e);
-        }
-        return false;
+    public static boolean isValidDate(LocalDateTime date) {
+        return date.isBefore(LocalDateTime.now());
+    }
+
+    public static boolean isDepartureDateBeforeArrivalDate(LocalDateTime departureDate, LocalDateTime arrivalDate) {
+        return departureDate.isBefore(arrivalDate);
     }
 }

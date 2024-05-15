@@ -1,11 +1,10 @@
 package org.caglar.flightsearchapi.controller;
 
+import org.caglar.flightsearchapi.exceptions.flightExceptions.FlightNotFoundException;
 import org.caglar.flightsearchapi.models.Flight;
+import org.caglar.flightsearchapi.models.dto.FlightDTO;
 import org.caglar.flightsearchapi.service.FlightService;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/flight-search/v1")
@@ -17,7 +16,14 @@ public class FlightController {
     }
 
     @PostMapping
-    public Flight save(@RequestBody Flight flight) throws Exception {
-        return flightService.save(flight);
+    public FlightDTO save(@RequestBody FlightDTO flightDTO,
+                          @RequestParam String departureAirport,
+                          @RequestParam String arrivalAirport) throws Exception {
+        return flightService.save(flightDTO, departureAirport, arrivalAirport);
+    }
+
+    @GetMapping("/{id}")
+    public FlightDTO getById(@PathVariable long id) throws FlightNotFoundException {
+        return flightService.getById(id);
     }
 }

@@ -20,7 +20,6 @@ public class AirportService {
 
     public Airport getByCityCode(String cityCode) {
         if (!cityCode.isEmpty()) {
-            System.out.println(cityCode);
             return airportRepository.findByCityCode(cityCode);
         }
         return null;

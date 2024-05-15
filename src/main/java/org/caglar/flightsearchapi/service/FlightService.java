@@ -6,12 +6,15 @@ import org.caglar.flightsearchapi.exceptions.airportExceptions.AirportNotFoundEx
 import org.caglar.flightsearchapi.exceptions.flightExceptions.FlightNotFoundException;
 import org.caglar.flightsearchapi.models.Flight;
 import org.caglar.flightsearchapi.models.dto.FlightDTO;
+import org.caglar.flightsearchapi.models.enums.Airport;
 import org.caglar.flightsearchapi.repository.AirportRepository;
 import org.caglar.flightsearchapi.repository.FlightRepository;
 import org.caglar.flightsearchapi.utils.DateUtil;
 import org.caglar.flightsearchapi.utils.MapperUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Arrays;
 
 @Service
 public class FlightService {
@@ -25,10 +28,11 @@ public class FlightService {
     }
 
     public FlightDTO save(FlightDTO flightDTO, String departureAirport, String arrivalAirport) throws InvalidDateException, InvalidPriceException, AirportNotFoundException {
-
+        if(!Arrays.toString(Airport.values()).contains(departureAirport) || !Arrays.toString(Airport.values()).contains(arrivalAirport)){
+            throw new AirportNotFoundException("Invalid airport name: " + departureAirport + " - " + arrivalAirport);
+        }
         flightDTO.setDepartureAirport(airportRepository.findByCityCode(departureAirport));
         flightDTO.setArrivalAirport(airportRepository.findByCityCode(arrivalAirport));
-
         if(flightDTO.getDepartureAirport() != null && flightDTO.getArrivalAirport() != null){
             Flight flight = MapperUtil.instance().map(flightDTO, Flight.class);
             if(flight != null){
@@ -38,7 +42,7 @@ public class FlightService {
                 }
             }
         }
-        throw new AirportNotFoundException("Invalid airport name: " + departureAirport + " - " + arrivalAirport);
+        return null;
     }
 
     public FlightDTO getById(long id) throws FlightNotFoundException {

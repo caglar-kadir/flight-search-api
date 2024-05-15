@@ -3,13 +3,7 @@ package org.caglar.flightsearchapi.utils;
 import org.caglar.flightsearchapi.exceptions.InvalidDateException;
 import org.caglar.flightsearchapi.exceptions.InvalidPriceException;
 import org.caglar.flightsearchapi.models.Flight;
-import org.caglar.flightsearchapi.models.dto.FlightDTO;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.Date;
 
 public class DateUtil {
     private DateUtil() {

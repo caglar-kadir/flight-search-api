@@ -1,7 +1,9 @@
 package org.caglar.flightsearchapi.service;
 
 import org.caglar.flightsearchapi.models.Airport;
+import org.caglar.flightsearchapi.models.dto.AirportDTO;
 import org.caglar.flightsearchapi.repository.AirportRepository;
+import org.caglar.flightsearchapi.utils.MapperUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,14 +16,21 @@ public class AirportService {
         this.airportRepository = airportRepository;
     }
 
-    public Airport save(Airport airport) {
-        return airportRepository.save(airport);
+    public AirportDTO save(AirportDTO airportDTO) {
+        Airport airport = MapperUtil.instance().map(airportDTO, Airport.class);
+        if (airport != null) {
+            airportRepository.save(airport);
+            return airportDTO;
+        }
+        return null;
     }
 
-    public Airport getByCityCode(String cityCode) {
+    public AirportDTO getByCityCode(String cityCode) {
         if (!cityCode.isEmpty()) {
-            System.out.println(cityCode);
-            return airportRepository.findByCityCode(cityCode);
+            Airport airport = airportRepository.findByCityCode(cityCode);
+            if (airport != null) {
+                return MapperUtil.instance().map(airport, AirportDTO.class);
+            }
         }
         return null;
     }

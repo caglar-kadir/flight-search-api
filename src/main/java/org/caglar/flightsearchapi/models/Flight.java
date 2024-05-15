@@ -28,12 +28,10 @@ public class Flight {
 
     @ManyToOne
     @JoinColumn(name = "departure_airport")
-    @JsonIgnore
     private Airport departureAirport;
 
     @ManyToOne
     @JoinColumn(name = "arrival_airport")
-    @JsonIgnore
     private Airport arrivalAirport;
 
 }

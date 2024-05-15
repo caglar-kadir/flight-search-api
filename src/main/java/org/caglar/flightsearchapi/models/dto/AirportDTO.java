@@ -9,6 +9,4 @@ import java.util.List;
 public class AirportDTO {
     private String cityCode;
     private String city;
-    private List<Flight> departureFlights;
-    private List<Flight> arrivalFlights;
 }

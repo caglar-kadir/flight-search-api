@@ -3,6 +3,7 @@ package org.caglar.flightsearchapi.service;
 import org.caglar.flightsearchapi.exceptions.InvalidDateException;
 import org.caglar.flightsearchapi.exceptions.InvalidPriceException;
 import org.caglar.flightsearchapi.exceptions.airportExceptions.AirportNotFoundException;
+import org.caglar.flightsearchapi.exceptions.flightExceptions.FlightNotFoundException;
 import org.caglar.flightsearchapi.models.Flight;
 import org.caglar.flightsearchapi.models.dto.FlightDTO;
 import org.caglar.flightsearchapi.repository.AirportRepository;
@@ -38,5 +39,13 @@ public class FlightService {
             }
         }
         throw new AirportNotFoundException("Invalid airport name: " + departureAirport + " - " + arrivalAirport);
+    }
+
+    public FlightDTO getById(long id) throws FlightNotFoundException {
+        Flight flight = flightRepository.getById(id);
+        if(flight != null){
+            return MapperUtil.instance().map(flight, FlightDTO.class);
+        }
+        throw new FlightNotFoundException("Flight not found.");
     }
 }

@@ -1,5 +1,6 @@
 package org.caglar.flightsearchapi.controller;
 
+import org.caglar.flightsearchapi.exceptions.flightExceptions.FlightNotFoundException;
 import org.caglar.flightsearchapi.models.Flight;
 import org.caglar.flightsearchapi.models.dto.FlightDTO;
 import org.caglar.flightsearchapi.service.FlightService;
@@ -19,5 +20,10 @@ public class FlightController {
                           @RequestParam String departureAirport,
                           @RequestParam String arrivalAirport) throws Exception {
         return flightService.save(flightDTO, departureAirport, arrivalAirport);
+    }
+
+    @GetMapping("/{id}")
+    public FlightDTO getById(@PathVariable long id) throws FlightNotFoundException {
+        return flightService.getById(id);
     }
 }

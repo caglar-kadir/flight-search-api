@@ -1,6 +1,6 @@
 package org.caglar.flightsearchapi.models.enums;
 
-public enum Airport {
+public enum AirportEnum {
     IST,
     SAW,
     AYT,

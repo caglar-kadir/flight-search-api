@@ -6,6 +6,7 @@ import lombok.Data;
 
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.UUID;
 
 @Data
 @Entity
@@ -13,9 +14,9 @@ import java.util.Date;
 public class Flight {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "flight_id")
-    private long id;
+    private UUID id;
 
     @Column(name = "departure_date")
     private LocalDateTime departureDate;

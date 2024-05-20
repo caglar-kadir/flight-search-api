@@ -4,6 +4,7 @@ import org.caglar.flightsearchapi.exceptions.InvalidDateException;
 import org.caglar.flightsearchapi.exceptions.InvalidPriceException;
 import org.caglar.flightsearchapi.models.Flight;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class DateUtil {
     private DateUtil() {
@@ -25,11 +26,15 @@ public class DateUtil {
         return true;
     }
 
-    public static boolean isValidDate(LocalDateTime date) {
+    public static LocalDateTime convertStringToDate(String date) {
+        return LocalDateTime.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+    }
+
+    private static boolean isValidDate(LocalDateTime date) {
         return date.isBefore(LocalDateTime.now());
     }
 
-    public static boolean isDepartureDateBeforeArrivalDate(LocalDateTime departureDate, LocalDateTime arrivalDate) {
+    private static boolean isDepartureDateBeforeArrivalDate(LocalDateTime departureDate, LocalDateTime arrivalDate) {
         return departureDate.isBefore(arrivalDate);
     }
 }

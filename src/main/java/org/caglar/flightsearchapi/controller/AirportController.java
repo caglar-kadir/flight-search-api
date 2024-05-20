@@ -1,7 +1,6 @@
 package org.caglar.flightsearchapi.controller;
 
-import org.caglar.flightsearchapi.models.Airport;
-import org.caglar.flightsearchapi.models.dto.AirportDTO;
+import org.caglar.flightsearchapi.models.dto.CreateAirport;
 import org.caglar.flightsearchapi.service.AirportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -17,12 +16,12 @@ public class AirportController {
     }
 
     @PostMapping
-    public AirportDTO save(@RequestBody AirportDTO airportDTO) {
+    public CreateAirport save(@RequestBody CreateAirport airportDTO) {
         return airportService.save(airportDTO);
     }
 
-    @GetMapping
-    public AirportDTO getByCityCode (@RequestParam String cityCode){
+    @GetMapping("/city")
+    public CreateAirport getByCityCode (@RequestParam String cityCode){
         return airportService.getByCityCode(cityCode);
     }
 }

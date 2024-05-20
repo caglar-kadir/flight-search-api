@@ -3,10 +3,10 @@ package org.caglar.flightsearchapi.service;
 import org.caglar.flightsearchapi.exceptions.InvalidDateException;
 import org.caglar.flightsearchapi.exceptions.InvalidPriceException;
 import org.caglar.flightsearchapi.exceptions.airportExceptions.AirportNotFoundException;
-import org.caglar.flightsearchapi.exceptions.flightExceptions.FlightNotFoundException;
+import org.caglar.flightsearchapi.models.Airport;
 import org.caglar.flightsearchapi.models.Flight;
-import org.caglar.flightsearchapi.models.dto.FlightDTO;
-import org.caglar.flightsearchapi.models.enums.Airport;
+import org.caglar.flightsearchapi.models.dto.CreateFlight;
+import org.caglar.flightsearchapi.models.enums.AirportEnum;
 import org.caglar.flightsearchapi.repository.AirportRepository;
 import org.caglar.flightsearchapi.repository.FlightRepository;
 import org.caglar.flightsearchapi.utils.DateUtil;
@@ -15,6 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
 
 @Service
 public class FlightService {
@@ -27,29 +29,46 @@ public class FlightService {
         this.airportRepository = airportRepository;
     }
 
-    public FlightDTO save(FlightDTO flightDTO, String departureAirport, String arrivalAirport) throws InvalidDateException, InvalidPriceException, AirportNotFoundException {
-        if(!Arrays.toString(Airport.values()).contains(departureAirport) || !Arrays.toString(Airport.values()).contains(arrivalAirport)){
-            throw new AirportNotFoundException("Invalid airport name: " + departureAirport + " - " + arrivalAirport);
-        }
-        flightDTO.setDepartureAirport(airportRepository.findByCityCode(departureAirport));
-        flightDTO.setArrivalAirport(airportRepository.findByCityCode(arrivalAirport));
-        if(flightDTO.getDepartureAirport() != null && flightDTO.getArrivalAirport() != null){
-            Flight flight = MapperUtil.instance().map(flightDTO, Flight.class);
-            if(flight != null){
-                if(DateUtil.isFlightValid(flight)){
-                    flightRepository.save(flight);
-                    return flightDTO;
-                }
+    public Flight save(CreateFlight flightDTO, String departureAirport, String arrivalAirport) throws InvalidDateException, InvalidPriceException, AirportNotFoundException {
+        checkDepartureAirport(departureAirport);
+        checkArrivalAirport(arrivalAirport);
+        Flight flight = MapperUtil.map(flightDTO, Flight.class);
+        flight.setDepartureAirport(airportRepository.findByCityCode(departureAirport));
+        flight.setArrivalAirport(airportRepository.findByCityCode(arrivalAirport));
+        if (flight.getDepartureAirport() != null && flight.getArrivalAirport() != null) {
+            if (DateUtil.isFlightValid(flight)) {
+               return flightRepository.save(flight);
             }
         }
         return null;
     }
 
-    public FlightDTO getById(long id) throws FlightNotFoundException {
-        Flight flight = flightRepository.getById(id);
-        if(flight != null){
-            return MapperUtil.instance().map(flight, FlightDTO.class);
+    public Flight getById(UUID id) {
+        return flightRepository.getById(id);
+    }
+
+    public List<Flight> getByDateAndAirport(String startDate, String endDate, String departure, String arrival) throws AirportNotFoundException {
+        checkDepartureAirport(departure);
+        Airport departureAirport = airportRepository.findByCityCode(departure);
+        Airport arrivalAirport = airportRepository.findByCityCode(arrival);
+        startDate += " 00:00";
+        if (endDate.isEmpty()) {
+            return flightRepository.findByDepartureAirportAndArrivalAirportAndDepartureDate(departureAirport, arrivalAirport, DateUtil.convertStringToDate(startDate));
         }
-        throw new FlightNotFoundException("Flight not found.");
+        checkArrivalAirport(arrival);
+        endDate += " 23:59";
+        return flightRepository.findByDatesAndAirports(DateUtil.convertStringToDate(startDate), DateUtil.convertStringToDate(endDate), departureAirport, arrivalAirport);
+    }
+
+    private void checkDepartureAirport(String departureAirport) throws AirportNotFoundException {
+        if (!Arrays.toString(AirportEnum.values()).contains(departureAirport)) {
+            throw new AirportNotFoundException("Invalid departure airport: " + departureAirport);
+        }
+    }
+
+    private void checkArrivalAirport(String arrivalAirport) throws AirportNotFoundException {
+        if (!Arrays.toString(AirportEnum.values()).contains(arrivalAirport)) {
+            throw new AirportNotFoundException("Invalid arrival airport: " + arrivalAirport);
+        }
     }
 }

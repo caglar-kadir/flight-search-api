@@ -5,7 +5,7 @@ import org.caglar.flightsearchapi.exceptions.InvalidPriceException;
 import org.caglar.flightsearchapi.exceptions.airportExceptions.AirportNotFoundException;
 import org.caglar.flightsearchapi.models.Airport;
 import org.caglar.flightsearchapi.models.Flight;
-import org.caglar.flightsearchapi.models.dto.CreateFlight;
+import org.caglar.flightsearchapi.models.dto.FlightDTO;
 import org.caglar.flightsearchapi.models.enums.AirportEnum;
 import org.caglar.flightsearchapi.repository.AirportRepository;
 import org.caglar.flightsearchapi.repository.FlightRepository;
@@ -29,7 +29,7 @@ public class FlightService {
         this.airportRepository = airportRepository;
     }
 
-    public Flight save(CreateFlight flightDTO, String departureAirport, String arrivalAirport) throws InvalidDateException, InvalidPriceException, AirportNotFoundException {
+    public Flight save(FlightDTO flightDTO, String departureAirport, String arrivalAirport) throws InvalidDateException, InvalidPriceException, AirportNotFoundException {
         checkDepartureAirport(departureAirport);
         checkArrivalAirport(arrivalAirport);
         Flight flight = MapperUtil.map(flightDTO, Flight.class);
